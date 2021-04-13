@@ -29,11 +29,6 @@ def cleanData(dataset_array):
 	dataset_array = dataset_array[dataset_array[..., 1] >= 0]
 	return dataset_array[:, 1:]
 
-"""
 test = readData()
 test = cleanData(test)
-plt.plot(test[:, 0], color="blue")
-plt.title("Electrical Demand Over Time")
-plt.ylabel('Watts')
-plt.savefig("figures/test.png")
-"""
+np.savetxt('data/load_by_minute.csv', test, delimiter=',')
