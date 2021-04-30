@@ -50,6 +50,12 @@ def trainModel(modelName, dataset):
 	regressor.add(LSTM(units = 50, return_sequences = True))
 	regressor.add(Dropout(0.2))
 
+	regressor.add(LSTM(units = 50, return_sequences = True))
+	regressor.add(Dropout(0.2))
+
+	regressor.add(LSTM(units = 50, return_sequences = True))
+	regressor.add(Dropout(0.2))
+
 	regressor.add(LSTM(units = 50, return_sequences = False))
 	regressor.add(Dropout(0.2))
 
@@ -65,32 +71,34 @@ def trainModel(modelName, dataset):
 def evaluateModel(modelName, dataset):
 	model = keras.models.load_model(modelName)
 	_, _, x_test, y_test, maxLoad = getData(dataset)
+	#results = model.evaluate(x_test, y_test)
 	results = model.evaluate(x_test, y_test, batch_size = 55)
 	print('Raw Loss: ' + str(results))
 	print('Scaled Loss: ' + str(results * maxLoad) + ' watts')
+	return results * maxLoad
 
 
-def visualizeModelResults(modelName, dataset, fileName):
+def visualizeModelResults(modelName, dataset):
 	model = keras.models.load_model(modelName)
 	_, _, x_test, y_test, maxLoad = getData(dataset)
 	predicted_results = model.predict(x_test)
 	predicted_results *= maxLoad
 	y_test *= maxLoad
 
-	print("(0) Time Series")
-	print("(1) Scatterplot")
-	graphType = int(input("Which type of graph: ")) 
-	graphName = input("Graph Name: ")
-	
+	version = modelName[7:].title().replace('_', ' ')
+	fileName = 'figures' + modelName[6:]
 
-	if graphType == 0:
-		plt.plot(y_test, color = 'red', label = "Actual Load")
-		plt.plot(predicted_results, color = 'blue', label = "Predicted Load")
-		plt.ylabel("Demand in Watts")
-		plt.legend()
-	elif graphType == 1:
-		plt.scatter(predicted_results, y_test)
-		plt.ylabel("Actual Demand")
-		plt.xlabel("Predicted Demand")
-	plt.title(graphName)
-	plt.savefig(fileName)
+	plt.plot(y_test, color = 'red', label = "Actual Load")
+	plt.plot(predicted_results, color = 'blue', label = "Predicted Load")
+	plt.ylabel("Demand in Watts")
+	plt.legend()
+	plt.title(version + ' Load Prediction')
+	plt.savefig(fileName + '_time.png')
+
+	plt.clf()
+
+	plt.scatter(predicted_results, y_test)
+	plt.ylabel("Actual Demand")
+	plt.xlabel("Predicted Demand")
+	plt.title(version + ' Prediction Results')
+	plt.savefig(fileName + '_scatterplot.png')

@@ -7,7 +7,7 @@ def main(argv):
 	elif argv[0] == '-e':
 		neuralNet.evaluateModel(argv[1], argv[2])
 	elif argv[0] == '-v':
-		neuralNet.visualizeModelResults(argv[1], argv[2], argv[3])
+		neuralNet.visualizeModelResults(argv[1], argv[2])
 		
 
 main(sys.argv[1:])
